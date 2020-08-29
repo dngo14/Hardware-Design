@@ -1,7 +1,8 @@
-image: stodevx/stograde:latest
+image: python:buster
 build:
     tags:
         - raspberrypi
     stage: build
     script:
+        - pip3 install stograde
         - stograde ci

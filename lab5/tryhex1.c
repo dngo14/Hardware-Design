@@ -3,5 +3,5 @@
 
 int main() {
     int x = 0xc93e;
-    printf ("The value of x is 51518 in decimal, %x in hexadecimal\n", x);
+    printf ("The value of %x is 51518 in decimal, %x in hexadecimal\n", x, x);
 }

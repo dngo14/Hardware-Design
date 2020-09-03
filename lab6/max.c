@@ -13,5 +13,5 @@ int main() {
     float x, y, z;
     scanf("%f%f", &x, &y);
     z = max(x, y);
-    printf("The max is %f\n", z);
+    printf("The call max(%f, %f) returns the value %f\n",x, y, z);
 }

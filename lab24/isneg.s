@@ -10,6 +10,16 @@ result:
 	.asciz	"isneg(%d) returns %d\n"
 	.text
 	.align	2
+isneg:
+	push	{fp, lr}
+	add	fp, sp, #4
+	sub	sp, sp, #8
+	str	r0, [fp, #-8]
+	mov	r0, #1
+	sub	sp, fp, #4
+	pop	{fp, pc}
+	.text
+	.align	2
 	.global main
 main:
 	push	{fp, lr}
@@ -20,6 +30,9 @@ main:
 	ldr	r0, inputp
 	sub	r1, fp, #8
 	bl	__isoc99_scanf
+	ldr	r0, [fp, #-8]
+	bl	isneg
+	str	r0, [fp, #-12]
 	ldr	r0, resultp
 	ldr	r1, [fp, #-8]
 	ldr	r2, [fp, #-12]

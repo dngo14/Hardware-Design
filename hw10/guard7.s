@@ -8,7 +8,7 @@ prompt:	.asciz "Enter two integers x and y: "
 scanf_fmt:
 	.asciz "%d %d"
 	.align	2
-le_msg:	.asciz "%d is greater than or equal to 0 and plus %d is greater than 7 (AKA 1)\n" 
+le_msg:	.asciz "%d is less than or equal to 0 and plus %d is greater than 7 (AKA 1)\n" 
 	.align	2
 gt_msg:	.asciz "%d is not greater nor equal to 0 and/or plus %d not greater than 7 (AKA 0)\n"
 
@@ -32,7 +32,7 @@ main:
 
 	ldr	r0, [fp, #-8]	
 	cmp	r0, #0		
-	blt	else
+	bgt	else
 	ldr	r1, [fp, #-12]
 	add	r2, r1, r0
 	cmp	r2, #7

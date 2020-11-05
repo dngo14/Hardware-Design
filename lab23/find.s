@@ -7,7 +7,7 @@ input:
 	.asciz	"%c"
 	.align	2
 prompt2:
-	.asciz	"Enter a line of input: "
+	.asciz	"Enter a line of input: \n"
 	.align	2
 space:
 	.asciz	" "
@@ -28,12 +28,10 @@ main:
 	
 	ldr	r0, promptp
 	bl	printf
-	
-	ldr	r0, inputp
-	sub	r1, fp, #8
-	bl	__isoc99_scanf
-@	mov	r1, #'e'
-@	str	r1, [fp, #-8]
+
+	ldr     r0, inputp
+        sub     r1, fp, #8
+        bl      __isoc99_scanf
 	
 	ldr	r0, prompt2p
 	bl	printf

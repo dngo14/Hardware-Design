@@ -26,19 +26,20 @@ main:
 	add	fp, sp, #4
 	sub	sp, sp, #16
 	
-	ldr	r0, promptp
-	bl	printf
-
-	ldr     r0, inputp
-        sub     r1, fp, #8
-        bl      __isoc99_scanf
-	
 	ldr	r0, prompt2p
 	bl	printf
 	ldr	r0, buffp
 	mov	r1, #100
 	bl	get_line
 	str	r0, [fp, #-12]
+
+	ldr     r0, promptp
+        bl      printf
+
+        ldr     r0, inputp
+        sub     r1, fp, #8
+        bl      __isoc99_scanf
+
 	
 	mov	r0, #0
 	str	r0, [fp, #-16]

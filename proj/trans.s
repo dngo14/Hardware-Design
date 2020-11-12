@@ -52,6 +52,14 @@ else2:
         str     r3, [fp, #-12]
         add     r6, r6, #1
 	b	guard
+else3:
+	add	r7, r7, #1
+
+	ldr     r3, [fp, #-12]
+	add     r3, r3, #1
+	str     r3, [fp, #-12]
+	add     r6, r6, #1
+	b       guard
 body:
 	ldr	r0, buffp
 	ldr	r1, [fp, #-12]
@@ -59,6 +67,13 @@ body:
 
 	cmp	r0, r4
 	beq	else2
+
+	ldr     r0, buffp
+	ldr     r1, [fp, #-12]
+	bl      get_byte
+
+	cmp	r0, #'\n'
+	beq	else3
 
 	ldr	r3, [fp, #-12]
 	add	r3, r3, #1
@@ -171,6 +186,8 @@ main:
 */
 	
 	mov	r6, #0
+	mov	r7, #0
+	mov	r8, #0
 /*
 	ldr	r0, buffp
 	bl	translate

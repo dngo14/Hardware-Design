@@ -10,13 +10,58 @@ resultchar:
 	.asciz	"The characters with index 0 and 2 are %c and %c\n"
 	.align	2
 summary:
-	.asciz "Summary: \n %d characters\n"
+	.asciz "Summary: \n %d characters\n %d words\n %d lines\n"
 	.align	2
 resultstring:
 	.asciz "%s\n"
 	.text
 	.align	2
+is_upper:
+	push	{fp, lr}
+	add	fp, sp, #4
+	sub	sp, sp, #8
+
+	str	r1, [fp, #-12]
 	
+	cmp	r0, #65
+	blt	else5
+
+	cmp	r0, #90
+	bgt	else5
+
+	mov	r1, #1
+	
+	b	next
+else5:
+	mov	r1, #0
+next2:
+	sub	sp, fp, #4
+	pop	{fp, pc}
+	.text
+	.align	2
+is_lower:
+        push    {fp, lr}
+        add     fp, sp, #4
+        sub     sp, sp, #8
+	
+        str     r1, [fp, #-12]
+
+        cmp     r0, #97
+        blt     else5
+
+        cmp     r0, #122
+        bgt     else5
+
+        mov     r1, #1
+
+        b       next
+else6:
+        mov     r1, #0
+next3:
+        sub     sp, fp, #4
+        pop     {fp, pc}
+        .text
+        .align  2
 print_summary:
 	push	{fp, lr}
 	add	fp, sp, #4
@@ -24,6 +69,8 @@ print_summary:
 
 	ldr	r0, summaryp
 	mov	r1, r6
+	mov	r2, r8
+	mov	r3, r7
 	bl	printf
 	
 	sub	sp, fp, #4
@@ -37,6 +84,9 @@ translate:
 	sub	sp, fp, #16
 	str	r0, [fp, #-8]
 
+	mov	r3, #0
+	str	r3, [fp, #-16]
+	
 	mov	r3, #0
 	str	r3, [fp, #-12]
 	b	guard
@@ -59,7 +109,48 @@ else3:
 	add     r3, r3, #1
 	str     r3, [fp, #-12]
 	add     r6, r6, #1
+	
 	b       guard
+else4:
+	mov	r1, #0
+	ldr	r3, [fp, #-12]
+	
+	bl	is_upper
+	cmp	r1, #1
+	beq	else7
+	
+	bl	is_lower
+	cmp	r1, #1
+	beq	else7
+	
+	ldr     r3, [fp, #-12]
+        add     r3, r3, #1
+        str     r3, [fp, #-12]
+        add     r6, r6, #1
+
+	b	guard
+else7:
+	ldr	r1, [fp, #-16]
+	cmp	r1, #0
+	beq	else8
+
+	ldr     r3, [fp, #-12]
+	add     r3, r3, #1
+	str     r3, [fp, #-12]
+	add     r6, r6, #1
+
+	b       guard
+else8:
+	add	r8, r8, #1
+	mov	r1, #1
+	str	r1, [fp, #-16]
+
+	ldr     r3, [fp, #-12]
+        add     r3, r3, #1
+        str     r3, [fp, #-12]
+        add     r6, r6, #1
+
+        b       guard
 body:
 	ldr	r0, buffp
 	ldr	r1, [fp, #-12]
@@ -68,18 +159,23 @@ body:
 	cmp	r0, r4
 	beq	else2
 
-	ldr     r0, buffp
-	ldr     r1, [fp, #-12]
-	bl      get_byte
-
 	cmp	r0, #'\n'
 	beq	else3
 
-	ldr	r3, [fp, #-12]
-	add	r3, r3, #1
-	str	r3, [fp, #-12]
-	add	r6, r6, #1
-	
+	cmp	r0, #' '
+	bne	else4
+
+	ldr	r1, [fp, #-16]
+	cmp	r1, #1
+	bne	else4
+
+	mov	r1, #0
+	str	r1, [fp, #-16]
+
+	ldr     r3, [fp, #-12]
+        add     r3, r3, #1
+        str     r3, [fp, #-12]
+        add     r6, r6, #1
 guard:
 	ldr     r0, buffp
         ldr	r1, [fp, #-12]
@@ -159,9 +255,6 @@ main:
 	push	{fp, lr}
 	add	fp, sp, #4
 	sub	sp, sp, #16
-	
-	ldr	r0, promptp
-	bl	printf
 
 	ldr	r0, buffp
 	mov	r1, #100
@@ -171,27 +264,10 @@ main:
 	ldr	r0, buffp
 	bl	gettrans
 	
-	ldr	r0, resultcharp
-	mov	r1, r4
-	mov	r2, r5
-        bl      printf
-/*
-	ldr	r0, prompt2p
-	bl	printf
-
-	ldr	r0, buffp
-	mov	r1, #100
-	bl	get_line
-	str	r0, [fp, #-20]
-*/
-	
 	mov	r6, #0
 	mov	r7, #0
 	mov	r8, #0
-/*
-	ldr	r0, buffp
-	bl	translate
-*/
+
 	b	guard2
 
 body2:

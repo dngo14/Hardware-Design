@@ -22,19 +22,19 @@ resultstring:
 is_digit:
 	push	{fp, lr}
 	add	fp, sp, #4
-	sub	sp, sp, #8
+	sub	sp, sp, #8	@setup
 
-	cmp	r0, #'0'
-	blt	else11
+	cmp	r0, #48
+	blt	else11		@compare to ascii 0
 
-	cmp	r0, #'9'
+	cmp	r0, #57		@compare to ascii 9
 	bgt	else11
 
-	mov	r1, #1
+	mov	r1, #1		@move 1 into register r1
 
 	b	nextd
 else11:
-	mov	r1, #0
+	mov	r1, #0		@move 0 into ascii r1
 nextd:
 	sub     sp, fp, #4
         pop     {fp, pc}        @teardown
@@ -85,10 +85,10 @@ next3:
         sub     sp, fp, #4
         pop     {fp, pc}	@teardown
         .text
-	.punctuationp:	@creates pointer to global
+	.punctuationp:	@creates pointer to global punctuation
 		.word	punctuation
 	.digitp:
-		.word	digit
+		.word	digit	@pointer to global digit
 	.align  2
 print_summary:
 	push	{fp, lr}
@@ -105,10 +105,10 @@ print_summary:
 
 
 	ldr     r4, .punctuationp
-	ldr	r6, .digitp
+	ldr	r6, .digitp		@loads the pointers
 	
 	ldr	r0, summary2p
-	ldr     r1, [fp, #-8]
+	ldr     r1, [fp, #-8]	@load values and prints
 	ldr	r2, [r4]
 	ldr	r3, [r6]
 	bl	printf
@@ -116,10 +116,10 @@ print_summary:
 	sub	sp, fp, #4
 	pop	{fp, pc}	@teardown
 	.text
-	.punctuationp2:	@creates pointer to global
+	.punctuationp2:	@creates pointer to global punctuation
 		.word	punctuation
 	
-	.digitp2:
+	.digitp2:	@another pointer to global digit
 		.word	digit
 	.align	2
 	
@@ -236,8 +236,8 @@ body:
 	cmp	r0, r4		@compares byte to inchar 
 	beq	else2
 
-	bl	is_digit	@checks for digits
-	cmp	r1, #1
+	bl	is_digit	@checks for digits by branching to function
+	cmp	r1, #1		@if returned value is 1 branch to else12
 	beq	else12
 
 	cmp     r0, #'.' 	@checks for periods
@@ -340,25 +340,12 @@ next:
 	sub	sp, fp, #4
 	pop	{fp, pc}
         .text	@tear down
-	.punctuationp3:
-		.word	punctuation
-	.digitp3:
-		.word	digit
         .align  2
         .global main	
 main:
 	push	{fp, lr}
 	add	fp, sp, #4	@setup
 	sub	sp, sp, #16
-
-	ldr     r3, .punctuationp2
-        mov     r1, #0          @setup global variable punctuation
-        str     r1, [r3]
-
-        ldr     r3, .digitp2
-        mov     r1, #0          @setup global variable digit
-        str     r1, [r3]
-
 
 	ldr	r0, buffp
 	mov	r1, #100
@@ -421,5 +408,5 @@ summary2p:	.word	summary2
 	.align	2	@array
 buff:	.skip	100
 	.align	2
-punctuation:	.word
-digit:		.word
+punctuation:	.word	0
+digit:		.word	0

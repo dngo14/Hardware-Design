@@ -2,15 +2,21 @@
 
 int maxin(int x) {
   int count = 0;
-  int accumulator = 0;
   int num = 0;
+  int number = 0;
   printf("Enter inputs: \n");
-  while(count != x) {
+  scanf("%d", &number);
+  while(count != x-1) {
     scanf("%d", &num);
-    accumulator = accumulator + num;
+    if(number <= num) {
+      number = num;
+      }
+    else{
+      number= number;
+	}
     count++;
   }
-  return accumulator;
+  return number;
 }
 
 int main() {
